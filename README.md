@@ -10,6 +10,13 @@ https://www.bitmex.com/register/EJy18M (note to self: +bmex)
 https://www.deribit.com/reg-4393.9303
 
 
+## NOTE!
+
+
+Neither Mex nor Deribit care how many accounts you have. You can only verify once, but you can have as many unverified accounts as you like. Please, if you already have a mex or deribit account, do sign up for another one with the above links. It helps the cause and the positive energy is felt for days, rest assured :) :D
+
+
+
 ## Summary
 
 
