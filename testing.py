@@ -300,7 +300,7 @@ class MarketMaker( object ):
         self.futures_prv    = cp.deepcopy( self.futures )
         insts               = self.client.getinstruments()
         self.futures        = sort_by_key( { 
-            i[ 'instrumentName' ]: i for i in insts  if ('BTC-' in i['instrumentName'] or 'ETH-' in i['instrumentName'] )  and i[ 'kind' ] == 'future'#  
+            i[ 'instrumentName' ]: i for i in insts  if ('BTC-' in i['instrumentName'])  and i[ 'kind' ] == 'future'#  
         } )
         
         for k, v in self.futures.items():
@@ -856,55 +856,57 @@ class MarketMaker( object ):
     
     def update_status( self ):
         for p in self.client.positions():
-            if 'ETH' in p['instrument']:
-                pl = p['floatingPl']  / p['sizeEth'] * 100
-            else:
-                pl = p['floatingPl']  / p['sizeBtc'] * 100
-            if pl > TP:
-                print('TP!')
+            try:
                 if 'ETH' in p['instrument']:
-                    size = p['size']
+                    pl = p['floatingPl']  / p['sizeEth'] * 100
                 else:
-                    size = p['size']
-                direction = p['direction']
-                if direction == 'buy':
-                    size = size
+                    pl = p['floatingPl']  / p['sizeBtc'] * 100
+                if pl > TP:
+                    print('TP!')
                     if 'ETH' in p['instrument']:
-                        self.client.sell(  p['instrument'], size, self.get_eth() * 0.9, 'false' )
+                        size = p['size']
                     else:
-                        self.client.sell(  p['instrument'], size, self.get_spot() * 0.9, 'false' )
+                        size = p['size']
+                    direction = p['direction']
+                    if direction == 'buy':
+                        size = size
+                        if 'ETH' in p['instrument']:
+                            self.client.sell(  p['instrument'], size, self.get_eth() * 0.9, 'false' )
+                        else:
+                            self.client.sell(  p['instrument'], size, self.get_spot() * 0.9, 'false' )
 
-                else:
-                    if size < 0:
-                        size = size * -1
+                    else:
+                        if size < 0:
+                            size = size * -1
+                        if 'ETH' in p['instrument']:
+                            self.client.buy(  p['instrument'], size, self.get_eth() * 1.1, 'false' )
+                        else:
+                            self.client.buy(  p['instrument'], size, self.get_spot() * 1.1, 'false' )
+
+
+                if pl < SL:
+                    print('SL!')
                     if 'ETH' in p['instrument']:
-                        self.client.buy(  p['instrument'], size, self.get_eth() * 1.1, 'false' )
+                        size = p['size']
                     else:
-                        self.client.buy(  p['instrument'], size, self.get_spot() * 1.1, 'false' )
+                        size = p['size']
+                    direction = p['direction']
+                    if direction == 'buy':
+                        size = size
+                        if 'ETH' in p['instrument']:
+                            self.client.sell(  p['instrument'], size, self.get_eth() * 0.9, 'false' )
+                        else:
+                            self.client.sell(  p['instrument'], size, self.get_spot() * 0.9, 'false' )
 
-
-            if pl < SL:
-                print('SL!')
-                if 'ETH' in p['instrument']:
-                    size = p['size']
-                else:
-                    size = p['size']
-                direction = p['direction']
-                if direction == 'buy':
-                    size = size
-                    if 'ETH' in p['instrument']:
-                        self.client.sell(  p['instrument'], size, self.get_eth() * 0.9, 'false' )
                     else:
-                        self.client.sell(  p['instrument'], size, self.get_spot() * 0.9, 'false' )
-
-                else:
-                    if size < 0:
-                        size = size * -1
-                    if 'ETH' in p['instrument']:
-                        self.client.buy(  p['instrument'], size, self.get_eth() * 1.1, 'false' )
-                    else:
-                        self.client.buy(  p['instrument'], size, self.get_spot() * 1.1, 'false' )
-
+                        if size < 0:
+                            size = size * -1
+                        if 'ETH' in p['instrument']:
+                            self.client.buy(  p['instrument'], size, self.get_eth() * 1.1, 'false' )
+                        else:
+                            self.client.buy(  p['instrument'], size, self.get_spot() * 1.1, 'false' )
+            except:
+                e = e
         account = self.client.account()
         spot    = self.get_spot()
 
