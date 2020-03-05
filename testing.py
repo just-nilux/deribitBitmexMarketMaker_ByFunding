@@ -714,7 +714,7 @@ class MarketMaker( object ):
                 elif 'BTC' in k:
                     btclist.append(k)
             for k in ethlist:
-                if 'PERPTUAL' not in k:
+                if 'PERPETUAL' not in k:
                     m = self.get_bbo(k)
                     bid = m['bid']
                     ask=m['ask']
@@ -726,7 +726,7 @@ class MarketMaker( object ):
                         self.arbmult[k]=({"arb": arb, "long":k, "short": k[:3]+"-PERPETUAL"})
 
             for k in btclist:
-                if 'PERPTUAL' not in k:
+                if 'PERPETUAL' not in k:
                     m = self.get_bbo(k)
                     bid = m['bid']
                     ask=m['ask']
