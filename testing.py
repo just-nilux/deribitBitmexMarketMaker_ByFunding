@@ -66,7 +66,7 @@ args    = parser.parse_args()
 URL     = 'https://www.deribit.com'#ctrl+h!!!!!
 
 
-KEY     = ''
+KEY     = '='
 SECRET  = ''
 BP                  = 1e-4      # one basis point
 BTC_SYMBOL          = 'btc'
@@ -584,11 +584,9 @@ class MarketMaker( object ):
                                         if self.thearb <= 1 and 'PERPETUAL' not in fut or self.thearb > 1 and 'PERPETUAL' in fut:
                                             self.client.buy(  fut, qty, prc, 'true' )
 
-                                        if self.positions[fut]['size'] - qty > 0 and 'PERPETUAL' not in fut or 'PERPETUAL' in fut and self.positions[fut]['size'] - qty > 0:
-                                            self.client.sell( fut, qty, prc, 'true' )
                                     except Exception as e:
                                         print(e)
-                                self.logger.warn( 'Bid order failed: %s bid for %s'
+                                        self.logger.warn( 'Bid order failed: %s bid for %s'
                                                 % ( prc, qty ))
                     else:
                         try:
@@ -605,15 +603,11 @@ class MarketMaker( object ):
                             if 'BTC-PERPETUAL' in str(e):
                                 try:
 
-                                    if self.positions[fut]['size'] - qty > 0 and 'PERPETUAL' not in fut or 'PERPETUAL' in fut and self.positions[fut]['size'] - qty > 0:
-                                        self.client.sell( fut, qty, prc, 'true' )
-
-
                                     if self.thearb <= 1 and 'PERPETUAL' not in fut or self.thearb > 1 and 'PERPETUAL' in fut:
                                         self.client.buy(  fut, qty, prc, 'true' )
                                 except Exception as e:
                                     print(e)
-                            self.logger.warn( 'Bid order failed: %s bid for %s'
+                                    self.logger.warn( 'Bid order failed: %s bid for %s'
                                                 % ( prc, qty ))
 
                 # OFFERS
@@ -676,14 +670,15 @@ class MarketMaker( object ):
                                         if self.thearb >= 1 and 'PERPETUAL' not in fut or self.thearb < 1 and 'PERPETUAL' in fut or 'PERPETUAL' in fut and self.positions[fut]['size'] + qty < 0:
                                             self.client.sell( fut, qty, prc, 'true' )
 
-                                        if self.positions[fut]['size'] + qty < 0 and 'PERPETUAL' not in fut or 'PERPETUAL' in fut and self.positions[fut]['size'] + qty < 0:
-                                            self.client.sell( fut, qty, prc, 'true' )
                                     except Exception as e:
                                         print(e)
+
+                                
+                                        self.logger.warn( 'Sell Edit failed for %s' % oid )
+                                        self.logger.warn( 'Offer order failed: %s at %s'
+                                                        % ( qty, prc ))
                                 cancel_oids.append( oid )
-                                self.logger.warn( 'Sell Edit failed for %s' % oid )
-                                self.logger.warn( 'Offer order failed: %s at %s'
-                                                % ( qty, prc ))
+
 
                     else:
                         try:
@@ -702,11 +697,10 @@ class MarketMaker( object ):
                                     if self.thearb >= 1 and 'PERPETUAL' not in fut or self.thearb < 1 and 'PERPETUAL' in fut:
                                         self.client.sell(  fut, qty, prc, 'true' )
 
-                                    if self.positions[fut]['size'] + qty < 0 and 'PERPETUAL' not in fut:
-                                        self.client.sell( fut, qty, prc, 'true' )
                                 except Exception as e:
                                     print(e)
-                            self.logger.warn( 'Offer order failed: %s at %s'
+                        
+                                    self.logger.warn( 'Offer order failed: %s at %s'
                                                 % ( qty, prc ))
 
 
