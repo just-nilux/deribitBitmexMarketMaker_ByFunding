@@ -86,7 +86,7 @@ PCT_LIM_LONG        = 2000       # % position limit long
 PCT_LIM_SHORT       = 2000    # % position limit short
 PCT_QTY_BASE        = 20  # pct order qty in bps as pct of acct on each order
 MIN_LOOP_TIME       =   0.1       # Minimum time between loops
-RISK_CHARGE_VOL     =   12   # vol risk charge in bps per 100 vol
+RISK_CHARGE_VOL     =   5   # vol risk charge in bps per 100 vol
 SECONDS_IN_DAY      = 3600 * 24
 SECONDS_IN_YEAR     = 365 * SECONDS_IN_DAY
 WAVELEN_MTIME_CHK   = 15        # time in seconds between check for file change
@@ -104,8 +104,8 @@ PCT_LIM_SHORT       *= PCT
 PCT_QTY_BASE        *= BP
 VOL_PRIOR           *= PCT
 
-TP = 0.02
-SL = -0.02
+TP = 0.04
+SL = -0.04
 
 class MarketMaker( object ):
     
@@ -906,7 +906,7 @@ class MarketMaker( object ):
                         else:
                             self.client.buy(  p['instrument'], size, self.get_spot() * 1.1, 'false' )
             except:
-                e = e
+                print('e')
         account = self.client.account()
         spot    = self.get_spot()
 
