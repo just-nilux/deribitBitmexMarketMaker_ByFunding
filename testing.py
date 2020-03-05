@@ -84,9 +84,9 @@ NLAGS               =  2        # number of lags in time series
 PCT                 = 100 * BP  # one percentage point
 PCT_LIM_LONG        = 2000       # % position limit long
 PCT_LIM_SHORT       = 2000    # % position limit short
-PCT_QTY_BASE        = 40  # pct order qty in bps as pct of acct on each order
+PCT_QTY_BASE        = 20  # pct order qty in bps as pct of acct on each order
 MIN_LOOP_TIME       =   0.1       # Minimum time between loops
-RISK_CHARGE_VOL     =   9   # vol risk charge in bps per 100 vol
+RISK_CHARGE_VOL     =   1.5   # vol risk charge in bps per 100 vol
 SECONDS_IN_DAY      = 3600 * 24
 SECONDS_IN_YEAR     = 365 * SECONDS_IN_DAY
 WAVELEN_MTIME_CHK   = 15        # time in seconds between check for file change
@@ -105,7 +105,7 @@ PCT_QTY_BASE        *= BP
 VOL_PRIOR           *= PCT
 
 TP = 1.12
-SL = -0.08
+SL = -0.38
 
 class MarketMaker( object ):
     
@@ -574,7 +574,7 @@ class MarketMaker( object ):
                                     self.client.buy(  fut, qty, prc, 'true' )
 
                                 if self.positions[fut]['size'] - qty > 0 and 'PERPETUAL' not in fut or 'PERPETUAL' in fut and self.positions[fut]['size'] - qty > 0:
-                                    self.client.sell( fut, qty, prc, 'true' )
+                                    self.client.buy( fut, qty, prc, 'true' )
                                 cancel_oids.append( oid )
                                 self.logger.warn( 'Edit failed for %s' % oid )
                             except (SystemExit, KeyboardInterrupt):
@@ -594,7 +594,7 @@ class MarketMaker( object ):
                         try:
 
                             if self.positions[fut]['size'] - qty > 0 and 'PERPETUAL' not in fut or 'PERPETUAL' in fut and self.positions[fut]['size'] - qty > 0:
-                                    self.client.sell( fut, qty, prc, 'true' )
+                                    self.client.buy( fut, qty, prc, 'true' )
 
 
                             if self.arbmult[fut]['arb'] <= 1 and 'PERPETUAL' not in fut or self.arbmult[fut]['arb'] > 1 and 'PERPETUAL' in fut:
@@ -663,7 +663,7 @@ class MarketMaker( object ):
                                     self.client.sell( fut, qty, prc, 'true' )
 
                                 if self.positions[fut]['size'] + qty < 0 and 'PERPETUAL' not in fut or 'PERPETUAL' in fut and self.positions[fut]['size'] + qty < 0:
-                                    self.client.sell( fut, qty, prc, 'true' )
+                                    self.client.buy( fut, qty, prc, 'true' )
                                 cancel_oids.append( oid )
                                 self.logger.warn( 'Sell Edit failed for %s' % oid )
                             except (SystemExit, KeyboardInterrupt):
@@ -692,7 +692,7 @@ class MarketMaker( object ):
                                 self.client.sell(  fut, qty, prc, 'true' )
 
                             if self.positions[fut]['size'] + qty < 0 and 'PERPETUAL' not in fut:
-                                self.client.sell( fut, qty, prc, 'true' )
+                                self.client.buy( fut, qty, prc, 'true' )
                         except (SystemExit, KeyboardInterrupt):
                             raise
                         except Exception as e:
