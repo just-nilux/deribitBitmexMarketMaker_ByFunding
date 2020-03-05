@@ -86,7 +86,7 @@ PCT_LIM_LONG        = 2000       # % position limit long
 PCT_LIM_SHORT       = 2000    # % position limit short
 PCT_QTY_BASE        = 20  # pct order qty in bps as pct of acct on each order
 MIN_LOOP_TIME       =   0.1       # Minimum time between loops
-RISK_CHARGE_VOL     =   5   # vol risk charge in bps per 100 vol
+RISK_CHARGE_VOL     =   9   # vol risk charge in bps per 100 vol
 SECONDS_IN_DAY      = 3600 * 24
 SECONDS_IN_YEAR     = 365 * SECONDS_IN_DAY
 WAVELEN_MTIME_CHK   = 15        # time in seconds between check for file change
@@ -104,8 +104,8 @@ PCT_LIM_SHORT       *= PCT
 PCT_QTY_BASE        *= BP
 VOL_PRIOR           *= PCT
 
-TP = 0.04
-SL = -0.04
+TP = 1.12
+SL = -0.08
 
 class MarketMaker( object ):
     
@@ -861,6 +861,9 @@ class MarketMaker( object ):
                     pl = p['floatingPl']  / p['sizeEth'] * 100
                 else:
                     pl = p['floatingPl']  / p['sizeBtc'] * 100
+                direction = p['direction']
+                if direction == 'sell':
+                    pl = pl * -1    
                 if pl > TP:
                     print('TP!')
                     if 'ETH' in p['instrument']:
