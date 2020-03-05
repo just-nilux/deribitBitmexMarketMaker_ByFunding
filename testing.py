@@ -66,7 +66,7 @@ args    = parser.parse_args()
 URL     = 'https://www.deribit.com'#ctrl+h!!!!!
 
 
-KEY     = '='
+KEY     = ''
 SECRET  = ''
 BP                  = 1e-4      # one basis point
 BTC_SYMBOL          = 'btc'
@@ -559,6 +559,8 @@ class MarketMaker( object ):
                     if 'ETH' in fut:
                         qty = round( (prc * qtybtc / (con_sz / 1)) * self.get_eth()) 
                         print(qty)
+                    if 'PERPETUAL' in fut:
+                        qty = qty * len(self.futures)
                     if i < len_bid_ords:    
 
                         oid = bid_ords[ i ][ 'orderId' ]
@@ -645,6 +647,9 @@ class MarketMaker( object ):
                     if 'ETH' in fut:
                         
                         qty = round( (prc * qtybtc / (con_sz / 1)) * self.get_eth())
+
+                    if 'PERPETUAL' in fut:
+                        qty = qty * len(self.futures)
                     if i < len_ask_ords:
                         oid = ask_ords[ i ][ 'orderId' ]
                         try:
