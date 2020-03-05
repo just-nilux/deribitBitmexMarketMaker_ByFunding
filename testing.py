@@ -84,7 +84,7 @@ NLAGS               =  2        # number of lags in time series
 PCT                 = 100 * BP  # one percentage point
 PCT_LIM_LONG        = 2000       # % position limit long
 PCT_LIM_SHORT       = 2000    # % position limit short
-PCT_QTY_BASE        = 20  # pct order qty in bps as pct of acct on each order
+PCT_QTY_BASE        = 40  # pct order qty in bps as pct of acct on each order
 MIN_LOOP_TIME       =   0.1       # Minimum time between loops
 RISK_CHARGE_VOL     =   9   # vol risk charge in bps per 100 vol
 SECONDS_IN_DAY      = 3600 * 24
@@ -142,6 +142,7 @@ class MarketMaker( object ):
         self.dsrsi = 50
         self.minMaxDD = None
         self.arbmult = {}
+        self.thearb = 0
         self.maxMaxDD = None
         self.ws = {}
         self.ohlcv = {}
@@ -577,7 +578,16 @@ class MarketMaker( object ):
                             except (SystemExit, KeyboardInterrupt):
                                 raise
                             except Exception as e:
-                                print(e)
+
+                                if 'BTC-PERPETUAL' in str(e):
+                                    try:
+                                        if self.thearb <= 1 and 'PERPETUAL' not in fut or self.thearb > 1 and 'PERPETUAL' in fut:
+                                            self.client.buy(  fut, qty, prc, 'true' )
+
+                                        if self.positions[fut]['size'] - qty > 0 and 'PERPETUAL' not in fut or 'PERPETUAL' in fut and self.positions[fut]['size'] - qty > 0:
+                                            self.client.sell( fut, qty, prc, 'true' )
+                                    except Exception as e:
+                                        print(e)
                                 self.logger.warn( 'Bid order failed: %s bid for %s'
                                                 % ( prc, qty ))
                     else:
@@ -592,7 +602,17 @@ class MarketMaker( object ):
                         except (SystemExit, KeyboardInterrupt):
                             raise
                         except Exception as e:
-                            print(e)
+                            if 'BTC-PERPETUAL' in str(e):
+                                try:
+
+                                    if self.positions[fut]['size'] - qty > 0 and 'PERPETUAL' not in fut or 'PERPETUAL' in fut and self.positions[fut]['size'] - qty > 0:
+                                        self.client.sell( fut, qty, prc, 'true' )
+
+
+                                    if self.thearb <= 1 and 'PERPETUAL' not in fut or self.thearb > 1 and 'PERPETUAL' in fut:
+                                        self.client.buy(  fut, qty, prc, 'true' )
+                                except Exception as e:
+                                    print(e)
                             self.logger.warn( 'Bid order failed: %s bid for %s'
                                                 % ( prc, qty ))
 
@@ -650,7 +670,18 @@ class MarketMaker( object ):
                             except (SystemExit, KeyboardInterrupt):
                                 raise
                             except Exception as e:
-                                print(e)
+                                if 'BTC-PERPETUAL' in str(e):
+                                    try:
+
+                                        if self.thearb >= 1 and 'PERPETUAL' not in fut or self.thearb < 1 and 'PERPETUAL' in fut or 'PERPETUAL' in fut and self.positions[fut]['size'] + qty < 0:
+                                            self.client.sell( fut, qty, prc, 'true' )
+
+                                        if self.positions[fut]['size'] + qty < 0 and 'PERPETUAL' not in fut or 'PERPETUAL' in fut and self.positions[fut]['size'] + qty < 0:
+                                            self.client.sell( fut, qty, prc, 'true' )
+                                    except Exception as e:
+                                        print(e)
+                                cancel_oids.append( oid )
+                                self.logger.warn( 'Sell Edit failed for %s' % oid )
                                 self.logger.warn( 'Offer order failed: %s at %s'
                                                 % ( qty, prc ))
 
@@ -665,7 +696,16 @@ class MarketMaker( object ):
                         except (SystemExit, KeyboardInterrupt):
                             raise
                         except Exception as e:
-                            print(e)
+                            if 'BTC-PERPETUAL' in str(e):
+                                try:
+
+                                    if self.thearb >= 1 and 'PERPETUAL' not in fut or self.thearb < 1 and 'PERPETUAL' in fut:
+                                        self.client.sell(  fut, qty, prc, 'true' )
+
+                                    if self.positions[fut]['size'] + qty < 0 and 'PERPETUAL' not in fut:
+                                        self.client.sell( fut, qty, prc, 'true' )
+                                except Exception as e:
+                                    print(e)
                             self.logger.warn( 'Offer order failed: %s at %s'
                                                 % ( qty, prc ))
 
@@ -724,7 +764,7 @@ class MarketMaker( object ):
                         self.arbmult[k]=({"arb": arb, "long": k[:3]+"-PERPETUAL", "short": k})
                     if arb < 1:
                         self.arbmult[k]=({"arb": arb, "long":k, "short": k[:3]+"-PERPETUAL"})
-
+                    self.thearb = arb
             for k in btclist:
                 if 'PERPETUAL' not in k:
                     m = self.get_bbo(k)
@@ -736,6 +776,7 @@ class MarketMaker( object ):
                         self.arbmult[k]=({"arb": arb, "long": k[:3]+"-PERPETUAL", "short": k})
                     if arb < 1:
                         self.arbmult[k]=({"arb": arb, "long":k, "short": k[:3]+"-PERPETUAL"})
+                    self.thearb = arb
             print(self.arbmult)       
             # Directional
             # 0: none
