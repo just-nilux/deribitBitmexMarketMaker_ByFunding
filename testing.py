@@ -63,11 +63,11 @@ from datetime import datetime
 ##print(qs.stats.max_drawdown(s))
 
 args    = parser.parse_args()
-URL     = 'https://test.deribit.com'#ctrl+h!!!!!
+URL     = 'https://www.deribit.com'#ctrl+h!!!!!
 
 
-KEY     = 'vYdcoUEv'
-SECRET  = 'VWQnDJ7Qb3KmPB5yJZQAM41zbK741kcT6tGZMZzfpkc'
+KEY     = ''
+SECRET  = ''
 BP                  = 1e-4      # one basis point
 BTC_SYMBOL          = 'btc'
 CONTRACT_SIZE       = 10       # USD
@@ -772,7 +772,7 @@ class MarketMaker( object ):
             if ( t_now - t_ts ).total_seconds() >= WAVELEN_TS:
                 t_ts = t_now
                 for contract in self.futures.keys():
-                    self.ohlcv[contract] = requests.get('https://test.deribit.com/api/v2/public/get_tradingview_chart_data?instrument_name=' + contract + '&start_timestamp=' + str(int(time.time()) * 1000 - 1000 * 60 * 60) + '&end_timestamp=' + str(int(time.time())* 1000) + '&resolution=1')
+                    self.ohlcv[contract] = requests.get('https://www.deribit.com/api/v2/public/get_tradingview_chart_data?instrument_name=' + contract + '&start_timestamp=' + str(int(time.time()) * 1000 - 1000 * 60 * 60) + '&end_timestamp=' + str(int(time.time())* 1000) + '&resolution=1')
             
                 self.update_timeseries()
                 self.update_vols()
@@ -827,7 +827,7 @@ class MarketMaker( object ):
         # Get all futures contracts
         self.get_futures()
         for k in self.futures.keys():
-            self.ohlcv[k] = requests.get('https://test.deribit.com/api/v2/public/get_tradingview_chart_data?instrument_name=' + k + '&start_timestamp=' + str(int(time.time()) * 1000 - 1000 * 60 * 60) + '&end_timestamp=' + str(int(time.time())* 1000) + '&resolution=1')
+            self.ohlcv[k] = requests.get('https://www.deribit.com/api/v2/public/get_tradingview_chart_data?instrument_name=' + k + '&start_timestamp=' + str(int(time.time()) * 1000 - 1000 * 60 * 60) + '&end_timestamp=' + str(int(time.time())* 1000) + '&resolution=1')
             
             self.bbw[k] = 0
             self.bands[k] = []
