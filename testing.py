@@ -82,8 +82,8 @@ MAX_LAYERS          =  3# max orders to layer the ob with on each side
 MKT_IMPACT          =  0      # base 1-sided spread between bid/offer
 NLAGS               =  2        # number of lags in time series
 PCT                 = 100 * BP  # one percentage point
-PCT_LIM_LONG        = 200       # % position limit long
-PCT_LIM_SHORT       = 200    # % position limit short
+PCT_LIM_LONG        = 50       # % position limit long
+PCT_LIM_SHORT       = 50    # % position limit short
 PCT_QTY_BASE        = 20  # pct order qty in bps as pct of acct on each order
 MIN_LOOP_TIME       =   0.1       # Minimum time between loops
 RISK_CHARGE_VOL     =   1.5   # vol risk charge in bps per 100 vol
@@ -446,8 +446,8 @@ class MarketMaker( object ):
             pos_lim_long    = bal_btc * PCT_LIM_LONG / len(self.futures)
             pos_lim_short   = bal_btc * PCT_LIM_SHORT / len(self.futures)
             if 'PERPETUAL' in fut:
-                pos_lim_short = pos_lim_short / len(self.futures)
-                pos_lim_long = pos_lim_long / len(self.futures)
+                pos_lim_short = pos_lim_short * len(self.futures)
+                pos_lim_long = pos_lim_long * len(self.futures)
             expi            = self.futures[ fut ][ 'expi_dt' ]
             ##print(self.futures[ fut ][ 'expi_dt' ])
             if self.eth is 0:
